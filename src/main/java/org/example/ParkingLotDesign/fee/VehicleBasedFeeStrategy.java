@@ -2,7 +2,6 @@ package org.example.ParkingLotDesign.fee;
 
 import org.example.ParkingLotDesign.Ticket;
 import org.example.ParkingLotDesign.vehicleType.VehicleType;
-
 import java.util.Map;
 
 public class VehicleBasedFeeStrategy implements FeeStrategy{

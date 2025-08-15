@@ -1,5 +1,9 @@
 package org.example.ParkingLotDesign;
 
+import org.example.ParkingLotDesign.fee.FeeStrategy;
+import org.example.ParkingLotDesign.fee.FlatRateFeeStrategy;
+import org.example.ParkingLotDesign.vehicleType.Vehicle;
+
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -7,11 +11,11 @@ public class ParkingLot {
 
     private static ParkingLot instance;
     private final List<ParkingFloor> floors;
-    private org.example.ParkingLotDesign.fee.FeeStrategy feeStrategy;
+    private FeeStrategy feeStrategy;
     private final Map<String, Ticket> activeTickets = new ConcurrentHashMap<>();
 
     public ParkingLot() {
-        feeStrategy = new org.example.ParkingLotDesign.fee.FlatRateFeeStrategy();
+        feeStrategy = new FlatRateFeeStrategy();
         floors = new ArrayList<>();
     }
 
@@ -26,11 +30,11 @@ public class ParkingLot {
         floors.add(floor);
     }
 
-    public void setFeeStrategy(org.example.ParkingLotDesign.fee.FeeStrategy feeStrategy) {
+    public void setFeeStrategy(FeeStrategy feeStrategy) {
         this.feeStrategy = feeStrategy;
     }
 
-    public synchronized Ticket parkVehicle(org.example.ParkingLotDesign.vehicleType.Vehicle vehicle) throws Exception {
+    public synchronized Ticket parkVehicle(Vehicle vehicle) throws Exception {
         if (vehicle == null) return null;
 
         for (ParkingFloor floor : floors) {
