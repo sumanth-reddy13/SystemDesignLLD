@@ -67,11 +67,11 @@ public class WalletService {
         }
     }
 
-    public boolean isOffer1Valid(Account fromAccount, Account toAccount) {
+    private boolean isOffer1Valid(Account fromAccount, Account toAccount) {
         return fromAccount.getBalance().equals(toAccount.getBalance());
     }
 
-    public void fdAmountCheck(Account fromAccount) {
+    private void fdAmountCheck(Account fromAccount) {
         if (fromAccount.getBalance().compareTo(fromAccount.getFdAmount()) > 0) {
             fromAccount.incrementTransactionAboveFDCount();
             long transactionsAboveFD = fromAccount.getConsecutiveTransactionAboveFD();
