@@ -2,9 +2,10 @@ package org.example.StackOverflowDesign;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class User {
-    private final int id;
+    private final String id;
     private String username;
     private String email;
     private final List<Question> questions;
@@ -13,7 +14,7 @@ public class User {
     private int reputation;
 
     public User(String username, String email) {
-        this.id = generateId();
+        this.id = UUID.randomUUID().toString();
         this.username = username;
         this.email = email;
         questions = new ArrayList<>();
@@ -51,7 +52,7 @@ public class User {
         return (int) (System.currentTimeMillis() % Integer.MAX_VALUE);
     }
 
-    public int getId() {    return id;  }
+    public String getId() {    return id;  }
     public int getReputation() {    return reputation;  }
     public List<Answer> getAnswers() {  return answers; }
     public List<Comment> getComments() {    return comments;    }
@@ -59,4 +60,11 @@ public class User {
     public String getEmail() {  return email;   }
     public String getUsername() {   return username;    }
 
+    @Override
+    public String toString() {
+        return  "Id: " + this.id + "\n" +
+                "name: " + this.username + "\n" +
+                "email: " + this.email + "\n" +
+                "reputation: " + this.reputation;
+    }
 }

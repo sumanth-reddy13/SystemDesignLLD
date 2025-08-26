@@ -3,12 +3,13 @@ package org.example.StackOverflowDesign;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 public class StackOverflow {
     private final Map<Integer, Question> questions;
     private final Map<Integer, Answer> answers;
     private final Map<Integer, Tag> tags;
-    private final Map<Integer, User> users;
+    private final Map<String, User> users;
 
     public StackOverflow() {
         questions = new ConcurrentHashMap<>();   // Know more about this.
@@ -17,8 +18,9 @@ public class StackOverflow {
         users = new ConcurrentHashMap<>();
     }
 
-    public User createUser(String username, String email) {
+    public synchronized User createUser(String username, String email) {
         User user = new User(username, email);
+        System.out.println("user created with Id " + user.getId());
         users.put(user.getId(), user);
         return user;
     }
@@ -60,9 +62,28 @@ public class StackOverflow {
         return user.getQuestions();
     }
 
+    public void searchQuestionByQuery(String query) {
+        List<Question> questionsList = questions.values().stream()
+                .filter(q -> q.getTitle().toLowerCase().contains(query.toLowerCase()) ||
+                        q.getContent().toLowerCase().contains(query.toLowerCase()) ||
+                        q.getTags().stream().anyMatch(tag -> tag.getName().equalsIgnoreCase(query))
+                )
+                .collect(Collectors.toList());
+
+        for (Question q : questionsList) {
+            System.out.println("title: " + q.getTitle() + " content: " + q.getContent());
+        }
+    }
+
     public Question getQuestion(int id) {   return questions.get(id); }
     public Answer getAnswer(int id) {   return answers.get(id); }
     public User getUser(int id) {   return users.get(id); }
     public Tag getTag(int id) {   return tags.get(id); }
+
+    public void getUsers() {
+        for (User user : users.values()) {
+            System.out.println(user);
+        }
+    }
 }
 

@@ -25,5 +25,8 @@ public class StackOverflowDemo {
         system.voteAnswer(sumanth, answer, VoteType.UPVOTE);
 
         System.out.println(system.getQuestionsByUser(sumanth));
+        system.searchQuestionByQuery("what");
+
+        system.getUsers();
     }
 }
