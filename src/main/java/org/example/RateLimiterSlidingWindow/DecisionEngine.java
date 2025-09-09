@@ -18,7 +18,7 @@ public class DecisionEngine {
         int totalRequests = RequestStore.getRequestCount(key, startTime);
 
         if (totalRequests >= capacity) {
-            return "Request Rejected";
+            return "status - 429: too many requests.";
         }
 
         RequestStore.registerRequest(key, currentTimeInSec);
