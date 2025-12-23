@@ -16,7 +16,7 @@ public class Ticket {
         this.ticketId = ticketId;
         this.vehicle = vehicle;
         this.spot = spot;
-        this.entryTimeStamp = new Date().getTime() - (1000 * 60 * 60 * 24);
+        this.entryTimeStamp = new Date().getTime() - (1000 * 60 * 60 * 24); // 1 day
     }
 
     public void setExitTimeStamp() {
