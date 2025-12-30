@@ -19,8 +19,8 @@ public class CricbuzzService {
         return instance;
     }
 
-    public Match createMatch(Team teamA, Team teamB, MatchFormatStrategy matchFormatStrategy) {
-        Match match = new Match(teamA, teamB, matchFormatStrategy);
+    public Match createMatch(Team teamA, Team teamB, MatchFormatStrategy matchFormatStrategy, Team tossWonBy, String tossChoice) {
+        Match match = new Match(teamA, teamB, matchFormatStrategy, tossWonBy, tossChoice);
         matchRepository.save(match);
         return match;
     }

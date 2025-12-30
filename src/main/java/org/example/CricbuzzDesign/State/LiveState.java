@@ -3,6 +3,7 @@ package org.example.CricbuzzDesign.State;
 import org.example.CricbuzzDesign.Entity.Ball;
 import org.example.CricbuzzDesign.Entity.Innings;
 import org.example.CricbuzzDesign.Entity.Match;
+import org.example.CricbuzzDesign.enums.ExtraType;
 import org.example.CricbuzzDesign.enums.MatchStatus;
 
 import java.util.List;
@@ -29,6 +30,7 @@ public class LiveState implements MatchState {
             currentInnings.getPlayerStats().get(ball.getPlayedBy()).updateBallsPlayed(1);
         }
 
+        currentInnings.addBall(ball);
         match.notifyObservers(ball);
         checkForMatchEnd(match);
     }
@@ -54,9 +56,7 @@ public class LiveState implements MatchState {
         Innings currentInnings = match.getOngoingInnings();
 
         if (currentInnings.getOvers() >= match.getMatchStrategy().getOvers()) return true;
-        else if (currentInnings.getWickets() >= currentInnings.getBattingTeam().getPlayers().size() - 1) return true;
-
-        return true;
+        else return currentInnings.getWickets() >= currentInnings.getBattingTeam().getPlayers().size() - 1;
     }
 
     public void declareWinner(Match match) {

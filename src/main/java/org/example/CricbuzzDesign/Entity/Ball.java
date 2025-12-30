@@ -56,6 +56,11 @@ public class Ball {
             return this;
         }
 
+        public BallBuilder bowledBy(Player player) {
+            this.bowledBy = player;
+            return this;
+        }
+
         public Ball build() {
             if (commentary == null) {
                 commentary = new CommentaryManager().generateCommentary(new Ball(this));

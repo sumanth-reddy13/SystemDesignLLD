@@ -11,23 +11,26 @@ import java.util.List;
 
 public class Match {
     private String id;
-    private Team teamA;
-    private Team teamB;
-    private List<Innings> innings;
-    private MatchFormatStrategy matchStrategy;
+    private final Team teamA;
+    private final Team teamB;
+    private final List<Innings> innings;
+    private final MatchFormatStrategy matchStrategy;
     private MatchStatus currentState;
     private MatchState matchState;
     private List<MatchObserver> matchObservers;
-    private Team tossWonBy;
-    private String tossChoice;
+    private final Team tossWonBy;
+    private final String tossChoice;
     private String resultMessage;
 
-    public Match(Team teamA, Team teamB, MatchFormatStrategy matchFormatStrategy) {
+    // TODO Create a builder class to create Match object.
+    public Match(Team teamA, Team teamB, MatchFormatStrategy matchFormatStrategy, Team tossWonBy, String tossChoice) {
         this.teamA = teamA;
         this.teamB = teamB;
         this.matchStrategy = matchFormatStrategy;
         this.currentState = MatchStatus.SCHEDULED_STATE;
         this.matchState = new ScheduledState();
+        this.tossChoice = tossChoice;
+        this.tossWonBy = tossWonBy;
         this.innings = new ArrayList<>();
     }
 
@@ -43,6 +46,11 @@ public class Match {
         for (MatchObserver observer : matchObservers) {
             observer.update(this, ball);
         }
+    }
+
+    public void processBall(Ball ball) {
+        Innings currentInning = this.innings.get(innings.size() - 1);
+        matchState.processBall(this, ball);
     }
 
     public void setCurrentState(MatchStatus matchStatus) {
@@ -76,4 +84,12 @@ public class Match {
     }
 
     public String getResult() { return this.resultMessage; }
+
+    public Team getTeamA() { return this.teamA; }
+
+    public Team getTeamB() { return this.teamB; }
+
+    public Team getTossWonBy() { return this.tossWonBy; }
+
+    public String getTossChoice() { return this.tossChoice; }
 }

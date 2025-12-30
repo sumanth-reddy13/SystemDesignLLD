@@ -7,6 +7,8 @@ public class ClientNotifier implements MatchObserver {
 
     @Override
     public void update(Match match, Ball ball) {
-        // TODO Add logic to notify client.
+        // TODO Add more details.
+        System.out.println("******** Client Notifier ********");
+        System.out.println("Notified the client the updated score.");
     }
 }

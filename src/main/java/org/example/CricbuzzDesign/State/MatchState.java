@@ -8,6 +8,6 @@ public interface MatchState {
     public void processBall(Match match, Ball ball);
 
     default void startNextInnings(Match match) {
-        System.out.println("Next Innings can't be started in this Innings.");
+        System.out.println("Next Innings can't be started in this State.");
     }
 }
