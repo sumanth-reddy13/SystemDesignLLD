@@ -1,6 +1,8 @@
 package org.example.CricbuzzDesign.Entity;
 
 import org.example.CricbuzzDesign.enums.ExtraType;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +29,9 @@ public class Innings {
         for (Player player : bowlingTeam.getPlayers()) {
             playerStats.put(player, new PlayerStats());
         }
+
+        this.balls = new ArrayList<>();
+        this.overs = 0.0;
     }
 
     public void addBall(Ball ball) { this.balls.add(ball); }
