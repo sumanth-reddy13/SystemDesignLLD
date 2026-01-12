@@ -32,6 +32,7 @@ public class Match {
         this.tossChoice = tossChoice;
         this.tossWonBy = tossWonBy;
         this.innings = new ArrayList<>();
+        this.matchObservers = new ArrayList<>();
     }
 
     public void addObserver(MatchObserver observer) {
