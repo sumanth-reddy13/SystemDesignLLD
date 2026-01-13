@@ -9,8 +9,8 @@ public class InProgressState implements GameState {
 
     @Override
     public void handleMove(Game game, Player player, int row, int col) {
-        if (!player.getName().equals(game.getCurrentPlayer().getName())) {
-            throw new RuntimeException("This is not your turn to make a move");
+        if (player.getId() != (game.getCurrentPlayer().getId())) {
+            throw new RuntimeException(player.getName() + ", This is not your turn to make a move");
         }
 
         if (row < 0 || row >= game.getBoard().getSize() || col < 0 || col >= game.getBoard().getSize()) {
@@ -23,6 +23,5 @@ public class InProgressState implements GameState {
             throw new RuntimeException("This cell has already been set.");
         }
         board[row][col].setSymbol(player.getSymbol());
-        game.switchPlayer();
     }
 }

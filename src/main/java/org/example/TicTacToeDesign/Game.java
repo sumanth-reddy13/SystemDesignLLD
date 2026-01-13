@@ -5,6 +5,7 @@ import org.example.TicTacToeDesign.Enums.Symbol;
 import org.example.TicTacToeDesign.Models.Board;
 import org.example.TicTacToeDesign.Models.Cell;
 import org.example.TicTacToeDesign.Models.Player;
+import org.example.TicTacToeDesign.State.DrawState;
 import org.example.TicTacToeDesign.State.GameState;
 import org.example.TicTacToeDesign.State.InProgressState;
 import org.example.TicTacToeDesign.State.WinnerState;
@@ -21,6 +22,54 @@ public class Game {
     private GameState gameState;
     private Player currentPlayer;
     private List<WinningStrategy> winningStrategies;
+
+    private Game(Builder builder) {
+        this.board = builder.board;
+        this.player1 = builder.player1;
+        this.player2 = builder.player2;
+        this.winner = null;
+        this.gameState = new InProgressState();
+        this.currentPlayer = builder.currentPlayer;
+        this.winningStrategies = builder.winningStrategies;
+        this.status = GameStatus.IN_PROGRESS;
+    }
+
+    public void makeMove(Player player, int row, int col) {
+        gameState.handleMove(this, player, row, col);
+
+        if (isWinningMove()) {
+            this.winner = currentPlayer;
+            this.gameState = new WinnerState();
+            this.status = currentPlayer.getSymbol() == Symbol.X ? GameStatus.WINNER_X : GameStatus.WINNER_O;
+        } else if (isDraw()) {
+            this.winner = currentPlayer;
+            this.gameState = new DrawState();
+            this.status = GameStatus.DRAW;
+        }
+        this.switchPlayer();
+    }
+
+    public boolean isWinningMove() {
+        for (WinningStrategy winningStrategy : winningStrategies) {
+            if (winningStrategy.checkWinner(board, currentPlayer)) return true;
+        }
+        return false;
+    }
+
+    public boolean isDraw() {
+        Cell[][] board = this.getBoard().getBoard();
+        int count = 0;
+        for (Cell[] row : board) {
+            for (Cell cell : row) {
+                if (cell.getSymbol() == Symbol.EMPTY) count++;
+            }
+        }
+        return count == 0;
+    }
+
+    public void switchPlayer() {
+        this.currentPlayer = this.currentPlayer == player1 ? player2 : player1;
+    }
 
     public Board getBoard() {
         return board;
@@ -52,55 +101,6 @@ public class Game {
 
     public List<WinningStrategy> getWinningStrategies() {
         return winningStrategies;
-    }
-
-    private Game(Builder builder) {
-        this.board = builder.board;
-        this.player1 = builder.player1;
-        this.player2 = builder.player2;
-        this.winner = null;
-        this.gameState = new InProgressState();
-        this.currentPlayer = builder.currentPlayer;
-        this.winningStrategies = builder.winningStrategies;
-        this.status = GameStatus.IN_PROGRESS;
-    }
-
-    public void makeMove(Player player, int row, int col) {
-        gameState.handleMove(this, player, row, col);
-
-        if (isWinningMove()) {
-            this.winner = currentPlayer;
-            this.gameState = new WinnerState();
-            this.status = currentPlayer.getSymbol() == Symbol.X ? GameStatus.WINNER_X : GameStatus.WINNER_O;
-        } else if (isDraw()) {
-            this.winner = currentPlayer;
-            this.gameState = new WinnerState();
-            this.status = GameStatus.DRAW;
-        }
-    }
-
-    public boolean isWinningMove() {
-        for (WinningStrategy winningStrategy : winningStrategies) {
-            if (!winningStrategy.checkWinner(board, currentPlayer)) return false;
-        }
-
-        return true;
-    }
-
-    public boolean isDraw() {
-        Cell[][] board = this.getBoard().getBoard();
-        int count = 0;
-        for (Cell[] row : board) {
-            for (Cell cell : row) {
-                if (cell.getSymbol() == Symbol.EMPTY) count++;
-            }
-        }
-
-        return count == 0;
-    }
-
-    public void switchPlayer() {
-        currentPlayer = currentPlayer == player1 ? player2 : player1;
     }
 
     public static class Builder {

@@ -1,17 +1,17 @@
 package org.example.TicTacToeDesign.Enums;
 
 public enum Symbol {
-    X("X"),
-    O("O"),
-    EMPTY("_");
+    X('X'),
+    O('O'),
+    EMPTY('_');
 
-    private final String symbol;
+    private final char symbol;
 
-    Symbol(String symbol) {
+    Symbol(char symbol) {
         this.symbol = symbol;
     }
 
-    public String getSymbol() {
+    public char getChar() {
         return symbol;
     }
 }

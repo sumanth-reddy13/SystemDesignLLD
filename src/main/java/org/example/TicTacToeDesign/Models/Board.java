@@ -7,6 +7,12 @@ public class Board {
     public Board(int n) {
         this.size = n;
         this.board = new Cell[n][n];
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                this.board[i][j] = new Cell();
+            }
+        }
     }
 
     public Cell[][] getBoard() {
@@ -17,4 +23,13 @@ public class Board {
         return this.size;
     }
 
+    public void printBoard() {
+        System.out.println("***** BOARD *****");
+        for (int i = 0; i < this.size; i++) {
+            for (int j = 0; j < this.size; j++) {
+                System.out.print(board[i][j].getSymbol().getChar() + " ");
+            }
+            System.out.println();
+        }
+    }
 }

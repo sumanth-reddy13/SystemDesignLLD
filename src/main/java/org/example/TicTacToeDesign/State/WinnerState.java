@@ -5,6 +5,6 @@ import org.example.TicTacToeDesign.Models.Player;
 
 public class WinnerState implements GameState {
     public void handleMove(Game game, Player player, int row, int col) {
-        System.out.println("Game winner is decided. You can't make a move.");
+        System.out.println(game.getWinner().getName() + " won the game. You can't make a move.");
     }
 }
