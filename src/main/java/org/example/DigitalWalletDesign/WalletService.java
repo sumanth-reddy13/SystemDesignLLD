@@ -4,104 +4,74 @@ import java.math.BigDecimal;
 import java.util.*;
 
 public class WalletService {
-    HashMap<Integer, Account> accounts;
-    PriorityQueue<Account> offer2PQ;
+    Map<Integer, User> users = new HashMap<>();
+    Map<String, Account> accounts = new HashMap<>();
+    private static WalletService instance;
 
-    public WalletService() {
-        Dao dao = new Dao();
-        accounts = dao.getAccounts();
-        offer2PQ = new PriorityQueue<>(
-                        (acc1, acc2) -> {
-                            if (acc2.getTransactions().size() != acc1.getTransactions().size())
-                                return acc2.getTransactions().size() < acc1.getTransactions().size() ? -1 : 1;
+    private WalletService() {}
 
-                            if (!acc2.getBalance().equals(acc1.getBalance())) {
-                                return acc2.getBalance().intValue() < acc1.getBalance().intValue() ? -1 : 1;
-                            }
-
-                            return acc1.getCreatedAt().getTime() < acc2.getCreatedAt().getTime() ? -1 : 1;
-                        });
-    }
-
-    public void createWallet(String name, int amount) {
-        Account account = new Account(name, new BigDecimal(amount));
-        accounts.put(account.getAccountNumber(), account);
-        offer2PQ.add(account);
-        System.out.println(account);
-    }
-
-    public void createFD(int accountNumber, int amount) {
-        Account account = accounts.get(accountNumber);
-        account.setFD(amount);
-    }
-
-    public void Transfer(int from, int to, int amount) {
-        Transaction transaction = new Transaction(from, to, new BigDecimal(amount));
-        Account fromAccount = accounts.get(from);
-        Account toAccount = accounts.get(to);
-
-        fromAccount.setBalance(fromAccount.getBalance().subtract(new BigDecimal(amount)));
-        toAccount.setBalance(toAccount.getBalance().add(new BigDecimal(amount)));
-
-        if (isOffer1Valid(fromAccount, toAccount)) {
-            fromAccount.getBalance().add(new BigDecimal(10));
-            toAccount.getBalance().add(new BigDecimal(10));
+    public static synchronized WalletService getInstance() {
+        if (instance == null) {
+            instance = new WalletService();
         }
-
-        fdAmountCheck(fromAccount);
-        fromAccount.setTransaction(transaction);
-        System.out.println(transaction);
+        return instance;
     }
 
-    public void getAccountStatement(int accountNumber) {
+    public void deposit(String acctNum, double amount) {
+        Account acct = accounts.get(acctNum);
+        acct.deposit(amount);
+    }
+
+    public BigDecimal getAccountBalance(String accountNumber) {
+        Account acct = accounts.get(accountNumber);
+        return acct.getBalance();
+    }
+
+    public void withdraw(String acctNum, double amount) {
+        Account acct = accounts.get(acctNum);
+        acct.withdraw(amount);
+    }
+
+    public void addUser(User user) {
+        users.put(user.getUserId(), user);
+    }
+
+    public void createAccount(User user, String accountNumber, Currency currency) {
+        Account account = new Account(user, accountNumber, currency);
+        accounts.put(account.getAccountNumber(), account);
+    }
+
+    public synchronized void Transfer(String fromAccountNumber, String toAcctNum, int amount) {
+
+        if (!accounts.containsKey(fromAccountNumber) || !accounts.containsKey(toAcctNum)) {
+            throw new RuntimeException("Account number doesn't exist.");
+        }
+        Account fromAccount = accounts.get(fromAccountNumber);
+        Account toAccount = accounts.get(toAcctNum);
+        fromAccount.withdraw(amount);
+        toAccount.deposit(amount);
+
+        Transaction transaction = new Transaction(UUID.randomUUID().toString(),
+                fromAccount.getUser(),
+                toAccount.getUser(),
+                new BigDecimal(amount)
+        );
+
+        fromAccount.setTransaction(transaction);
+        toAccount.setTransaction(transaction);
+    }
+
+    public void printAccountStatement(String accountNumber) {
         Account account = accounts.get(accountNumber);
         System.out.println(account.getTransactions());
     }
 
     public void overview() {
-        for (Map.Entry<Integer, Account> account : accounts.entrySet()) {
+        for (Map.Entry<String, Account> account : accounts.entrySet()) {
             Set<Transaction> transactions = account.getValue().getTransactions();
             for (Transaction t : transactions) {
                 System.out.println(t);
             }
-        }
-    }
-
-    private boolean isOffer1Valid(Account fromAccount, Account toAccount) {
-        return fromAccount.getBalance().equals(toAccount.getBalance());
-    }
-
-    private void fdAmountCheck(Account fromAccount) {
-        if (fromAccount.getBalance().compareTo(fromAccount.getFdAmount()) > 0) {
-            fromAccount.incrementTransactionAboveFDCount();
-            long transactionsAboveFD = fromAccount.getConsecutiveTransactionAboveFD();
-            if (transactionsAboveFD == 5) {
-                fromAccount.getBalance().add(new BigDecimal(10));
-            }
-        }
-        else {
-            fromAccount.setIsFDToFalse();
-        }
-    }
-
-    public void activateOffer2() {
-        if (offer2PQ.size() < 3) return;
-
-        int k = 3;
-        List<Account> list = new ArrayList<>();
-        while (k > 0 && !offer2PQ.isEmpty()) {
-            list.add(offer2PQ.poll());
-            k--;
-        }
-
-        System.out.println("Accounts eligible for offer 2 are : " + list);
-
-        list.get(0).getBalance().add(new BigDecimal(10));
-        list.get(1).getBalance().add(new BigDecimal(10));
-        list.get(2).getBalance().add(new BigDecimal(10));
-
-        for (Account acct : list) {
-            offer2PQ.offer(acct);
         }
     }
 }
