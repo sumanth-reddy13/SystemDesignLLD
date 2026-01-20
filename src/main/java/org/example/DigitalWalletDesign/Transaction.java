@@ -5,13 +5,14 @@ import java.util.Date;
 import java.util.UUID;
 
 public class Transaction {
-    private final String transactionId = UUID.randomUUID().toString();
-    private final int from;
-    private final int to;
+    private final String transactionId;
+    private final User from;
+    private final User to;
     private final BigDecimal amount;
     private final Date tranDate;
 
-    public Transaction(int from, int to, BigDecimal amount) {
+    public Transaction(String transactionId, User from, User to, BigDecimal amount) {
+        this.transactionId = transactionId;
         this.from = from;
         this.to = to;
         this.amount = amount;

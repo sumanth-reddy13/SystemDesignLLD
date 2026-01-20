@@ -5,27 +5,33 @@ import java.util.Set;
 import java.util.TreeSet;
 
 public class Account {
-    private final int accountNumber;
+    private final String accountNumber;
     private BigDecimal balance;
     private final User user;
     private final Date createdAt;
-    private final Set<Transaction> transactions = new TreeSet<>((a, b) ->
-                                                            (a.getTranDate().compareTo(b.getTranDate())));
-    private boolean isFD;
-    private BigDecimal fdAmount;
-    private long consecutiveTransactionAboveFD;
+    private final Set<Transaction> transactions;
+    private Currency currency;
 
-    public Account(String name, BigDecimal amount) {
-        this.user = new User(name);
-        this.accountNumber = AccountNumberGenerator.getAccountNumber();
-        this.balance = amount;
+    public Account(User user, String accountNumber, Currency currency) {
+        this.user = user;
+        this.accountNumber = accountNumber;
+        this.balance = BigDecimal.ZERO;
         this.createdAt = new Date();
-        isFD = false;
-        fdAmount = new BigDecimal(0);
-        consecutiveTransactionAboveFD = 0;
+        this.transactions = new TreeSet<>((a, b) -> (a.getTranDate().compareTo(b.getTranDate())));
+        this.currency = currency;
     }
 
-    public int getAccountNumber() {
+    public synchronized boolean deposit(double amount) {
+        balance = balance.add(BigDecimal.valueOf(amount));
+        return true;
+    }
+
+    public synchronized boolean withdraw(double amount) {
+        balance = balance.subtract(BigDecimal.valueOf(amount));
+        return true;
+    }
+
+    public String getAccountNumber() {
         return accountNumber;
     }
 
@@ -53,12 +59,6 @@ public class Account {
         return this.createdAt;
     }
 
-    public void setFD(int amount) {
-        fdAmount.add(new BigDecimal(amount));
-        isFD = true;
-    }
-
-    public BigDecimal getFdAmount() { return fdAmount; }
 
     @Override
     public String toString() {
@@ -66,15 +66,4 @@ public class Account {
                 + " Account holder name: " + this.user.getUserName();
     }
 
-    public void incrementTransactionAboveFDCount() {
-        consecutiveTransactionAboveFD++;
-    }
-
-    public void setIsFDToFalse() {
-        isFD = false;
-        consecutiveTransactionAboveFD = 0;
-        fdAmount = new BigDecimal(0);
-    }
-
-    public long getConsecutiveTransactionAboveFD() { return consecutiveTransactionAboveFD; }
 }
